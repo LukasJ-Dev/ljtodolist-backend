@@ -21,5 +21,8 @@ Route::middleware('auth:api')->get('/projects', 'Api\ProjectsController@index');
 
 Route::middleware('auth:api')->post('/projects', 'Api\ProjectsController@store');
 
+Route::middleware('auth:api')->get('/teams', 'Api\TeamsController@index');
+Route::middleware('auth:api')->post('/teams', 'Api\TeamsController@store');
+
 Route::post('/register', 'Api\AuthController@register');
 Route::post('/login', 'Api\AuthController@login');
