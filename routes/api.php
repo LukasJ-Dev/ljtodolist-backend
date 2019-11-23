@@ -19,7 +19,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::middleware('auth:api')->get('/projects', 'Api\ProjectsController@index');
 
+Route::middleware('auth:api')->get('/projects/{id}', 'Api\ProjectsController@show');
+Route::middleware('auth:api')->get('/todolists/{id}', 'Api\TodolistsController@show');
+
 Route::middleware('auth:api')->post('/projects', 'Api\ProjectsController@store');
+Route::middleware('auth:api')->post('/todolists', 'Api\TodolistsController@store');
 
 Route::middleware('auth:api')->get('/teams', 'Api\TeamsController@index');
 Route::middleware('auth:api')->post('/teams', 'Api\TeamsController@store');

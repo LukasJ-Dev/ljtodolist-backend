@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Project;
 use App\Team;
+use App\Todolist;
 
 class ProjectsController extends Controller
 {
@@ -24,10 +25,16 @@ class ProjectsController extends Controller
             
         }
         return $projects;
-        //$projects = Project::where('belongs_to', auth()->id())->get();
+    }
 
-        //return auth()->user()->teams()->projects()->get();
-        //$procedure->stages()->pluck('stages.id')->toArray();
+    public function show($id) {
+        $project = Project::findOrFail($id);
+        $exists = auth()->user()->teams->contains($project->belongs_to);
+        if($exists) {
+            $todolists = Todolist::findOrFail($project->id);
+            return array("project" => $project, "todolists" => $todolists);
+        }
+        return ["You do not belong to the team!"];
     }
 
     public function store() {
@@ -40,8 +47,10 @@ class ProjectsController extends Controller
             Project::create($project);
             return $project;
         }
-        return "You do not belong to the team!";
+        return ["You do not belong to the team!"];
     }
+
+
 
     protected function validateProject() {
         return request()->validate([
