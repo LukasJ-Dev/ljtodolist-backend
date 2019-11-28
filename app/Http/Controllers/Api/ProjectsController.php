@@ -31,14 +31,13 @@ class ProjectsController extends Controller
         $project = Project::findOrFail($id);
         $exists = auth()->user()->teams->contains($project->belongs_to);
         if($exists) {
-            $todolists = Todolist::findOrFail($project->id);
+            $todolists = Todolist::where('project_id',$project->id)->get();
             return array("project" => $project, "todolists" => $todolists);
         }
         return ["You do not belong to the team!"];
     }
 
     public function store() {
-        
         $project = $this->validateProject();
         $exists = auth()->user()->teams->contains($project['belongs_to']);
         if($exists) {
@@ -50,14 +49,40 @@ class ProjectsController extends Controller
         return ["You do not belong to the team!"];
     }
 
+    public function update($id) {
+        $new_project = $this->validateProject();
+        $project = Project::findOrFail($id);
+        $exists = auth()->user()->teams->contains(request('belongs_to'));
+        $belongs_to_team = auth()->user()->teams->contains($project->belongs_to);
+        if($exists and $belongs_to_team) {
+            $project->title = request('title');
+            $project->description = request('description');
+            $project->belongs_to = request('belongs_to');
+            if(request('image') !== null) {
+                $imagePath = request('image')->store('projects', 'public');
+                $project->image = $imagePath;
+            }
+            $project->save();
+            return $project;
+        }
+        abort(403, 'Unauthorized action.');
+    }
 
+    public function destroy($id) {
+        $project = Project::findOrFail($id)->delete();
+        return $project;
+    }
+
+    protected function storeProject($project) {
+
+    }
 
     protected function validateProject() {
         return request()->validate([
             'title' => ['required', 'min:3', 'max:255'],
             'description' => ['required', 'min:3'],
             'belongs_to' => ['required'],
-            'image' => ['required','image']
+            'image' => ['image']
         ]);
     }
 }

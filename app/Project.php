@@ -11,7 +11,7 @@ class Project extends Model
     public function team() {
         return $this->belongsTo(Team::class);
     }
-    public function todolist() {
+    public function todolists() {
         return $this->hasMany(Todolist::class);
     }
 }

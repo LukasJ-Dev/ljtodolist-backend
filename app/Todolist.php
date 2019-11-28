@@ -10,4 +10,7 @@ class Todolist extends Model
     public function project() {
         return $this->belongsTo(Project::class);
     }
+    public function lists() {
+        return $this->hasMany(ListModel::class)->orderBy('order');
+    }
 }
